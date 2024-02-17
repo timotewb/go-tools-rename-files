@@ -67,7 +67,7 @@ func main() {
 
 	i := 1
 	for _, oldFileName := range files {
-		if !oldFileName.IsDir() {
+		if !oldFileName.IsDir() && oldFileName.Name() != ".DS_Store" {
 			newFileName := strings.Replace(replaceFileName, replaceHashStr, fmt.Sprintf(leadZero, i), -1) + filepath.Ext(oldFileName.Name())
 			e := os.Rename(filepath.Join(inDir, oldFileName.Name()), filepath.Join(inDir, newFileName))
 			if e != nil {
