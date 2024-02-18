@@ -66,8 +66,9 @@ func main() {
 	}
 
 	i := 1
+	ignore := []string{".DS_Store", "._.DS_Store"}
 	for _, oldFileName := range files {
-		if !oldFileName.IsDir() && oldFileName.Name() != ".DS_Store" {
+		if !oldFileName.IsDir() && !contains(ignore, oldFileName.Name()) {
 			newFileName := strings.Replace(replaceFileName, replaceHashStr, fmt.Sprintf(leadZero, i), -1) + filepath.Ext(oldFileName.Name())
 			e := os.Rename(filepath.Join(inDir, oldFileName.Name()), filepath.Join(inDir, newFileName))
 			if e != nil {
@@ -81,4 +82,13 @@ func main() {
 		zenity.Title("Information"),
 		zenity.InfoIcon)
 
+}
+
+func contains(list []string, target string) bool {
+    for _, str := range list {
+        if str == target {
+            return true
+        }
+    }
+    return false
 }
