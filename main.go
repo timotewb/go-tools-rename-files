@@ -68,7 +68,7 @@ func main() {
 	i := 1
 	ignore := []string{".DS_Store", "._.DS_Store"}
 	for _, oldFileName := range files {
-		if !oldFileName.IsDir() && !contains(ignore, oldFileName.Name()) {
+		if !oldFileName.IsDir() && !contains(ignore, oldFileName.Name()) && !isHiddenFile(filepath.Join(inDir, oldFileName.Name())) {
 			newFileName := strings.Replace(replaceFileName, replaceHashStr, fmt.Sprintf(leadZero, i), -1) + filepath.Ext(oldFileName.Name())
 			e := os.Rename(filepath.Join(inDir, oldFileName.Name()), filepath.Join(inDir, newFileName))
 			if e != nil {
@@ -91,4 +91,24 @@ func contains(list []string, target string) bool {
         }
     }
     return false
+}
+
+func isHiddenFile(filename string) (bool, error) {
+	if runtime.GOOS == "windows" {
+		pointer, err := syscall.UTF16PtrFromString(filename)
+		if err != nil {
+			return false, err
+		}
+		attributes, err := syscall.GetFileAttributes(pointer)
+		if err != nil {
+			return false, err
+		}
+		return attributes&syscall.FILE_ATTRIBUTE_HIDDEN !=  0, nil
+	} else {
+		// Unix/Linux file or directory that starts with . is hidden
+		if filename[0:1] == "." {
+			return true, nil
+		}
+	}
+	return false, nil
 }
