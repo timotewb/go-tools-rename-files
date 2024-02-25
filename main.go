@@ -77,10 +77,10 @@ func main() {
 			fmt.Println("----------------------------------------------------------------------------------------")
 			fmt.Println()
 
-			// e := os.Rename(filepath.Join(inDir, oldFileName.Name()), filepath.Join(inDir, newFileName))
-			// if e != nil {
-			// 	log.Fatal(e)
-			// }
+			e := os.Rename(filepath.Join(inDir, oldFileName.Name()), filepath.Join(inDir, newFileName))
+			if e != nil {
+				log.Fatal(e)
+			}
 			i += 1
 		}
 	}
