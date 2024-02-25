@@ -68,12 +68,19 @@ func main() {
 	i := 1
 	ignore := []string{".DS_Store", "._.DS_Store"}
 	for _, oldFileName := range files {
-		if !oldFileName.IsDir() && !contains(ignore, oldFileName.Name()) && !isHiddenFile(filepath.Join(inDir, oldFileName.Name())) {
+		if !oldFileName.IsDir() && !contains(ignore, oldFileName.Name()) && !strings.HasPrefix(oldFileName.Name(), ".") {
 			newFileName := strings.Replace(replaceFileName, replaceHashStr, fmt.Sprintf(leadZero, i), -1) + filepath.Ext(oldFileName.Name())
-			e := os.Rename(filepath.Join(inDir, oldFileName.Name()), filepath.Join(inDir, newFileName))
-			if e != nil {
-				log.Fatal(e)
-			}
+
+			fmt.Println("----------------------------------------------------------------------------------------")
+			fmt.Println("old:", filepath.Join(inDir, oldFileName.Name()))
+			fmt.Println("new:", filepath.Join(inDir, newFileName))
+			fmt.Println("----------------------------------------------------------------------------------------")
+			fmt.Println()
+
+			// e := os.Rename(filepath.Join(inDir, oldFileName.Name()), filepath.Join(inDir, newFileName))
+			// if e != nil {
+			// 	log.Fatal(e)
+			// }
 			i += 1
 		}
 	}
@@ -85,30 +92,10 @@ func main() {
 }
 
 func contains(list []string, target string) bool {
-    for _, str := range list {
-        if str == target {
-            return true
-        }
-    }
-    return false
-}
-
-func isHiddenFile(filename string) (bool, error) {
-	if runtime.GOOS == "windows" {
-		pointer, err := syscall.UTF16PtrFromString(filename)
-		if err != nil {
-			return false, err
-		}
-		attributes, err := syscall.GetFileAttributes(pointer)
-		if err != nil {
-			return false, err
-		}
-		return attributes&syscall.FILE_ATTRIBUTE_HIDDEN !=  0, nil
-	} else {
-		// Unix/Linux file or directory that starts with . is hidden
-		if filename[0:1] == "." {
-			return true, nil
+	for _, str := range list {
+		if str == target {
+			return true
 		}
 	}
-	return false, nil
+	return false
 }
